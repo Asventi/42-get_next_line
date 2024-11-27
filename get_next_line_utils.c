@@ -6,7 +6,7 @@
 /*   By: pjarnac <pjarnac@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 13:59:38 by pjarnac           #+#    #+#             */
-/*   Updated: 2024/11/27 13:50:53 by pjarnac          ###   ########.fr       */
+/*   Updated: 2024/11/27 14:53:55 by pjarnac          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ char	*ft_strndup(char *s, size_t n)
 	size_t		slen;
 	size_t		i;
 
+	if (!s)
+		return (0);
 	slen = ft_strlen(s);
 	if (slen > n)
 		slen = n;

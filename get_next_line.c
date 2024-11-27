@@ -6,7 +6,7 @@
 /*   By: pjarnac <pjarnac@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 13:59:17 by pjarnac           #+#    #+#             */
-/*   Updated: 2024/11/27 13:48:01 by pjarnac          ###   ########.fr       */
+/*   Updated: 2024/11/27 16:57:26 by pjarnac          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static char	*get_line(char *buf, ssize_t count)
 	}
 	else if (line)
 		if (remove_from_stock(&stock, (count < BUFFER_SIZE)) == -1)
-			return (buf);
+			return (free(line), buf);
 	return (line);
 }
 
@@ -90,11 +90,12 @@ char	*get_next_line(int fd)
 	{
 		buf = malloc(BUFFER_SIZE * sizeof (char));
 		if (!buf)
-			return (0);
+			return (get_line(0, -1), (char *)0);
 		res = read(fd, buf, BUFFER_SIZE);
 		line = get_line(buf, res);
 		if (line == buf)
 		{
+			get_line(0, -1);
 			free(buf);
 			return (0);
 		}
