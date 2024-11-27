@@ -6,7 +6,7 @@
 /*   By: pjarnac <pjarnac@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 13:59:27 by pjarnac           #+#    #+#             */
-/*   Updated: 2024/11/26 14:31:31 by pjarnac          ###   ########.fr       */
+/*   Updated: 2024/11/27 13:05:48 by pjarnac          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 # include <stdbool.h>
 
 char	*get_next_line(int fd);
-void	add_stock(char **stock, char *buf, ssize_t count);
+int		add_stock(char **stock, char *buf, size_t count);
 char	*ft_strchr(char *s, int c);
-char	*ft_strndup(char *s, ssize_t n);
-ssize_t	ft_strlen(char *str);
+char	*ft_strndup(char *s, size_t n);
+size_t	ft_strlen(char *str);
 void	free_stock(char **stock);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: pjarnac <pjarnac@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 13:59:17 by pjarnac           #+#    #+#             */
-/*   Updated: 2024/11/26 15:25:24 by pjarnac          ###   ########.fr       */
+/*   Updated: 2024/11/27 13:48:01 by pjarnac          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,18 @@ static char	*get_from_stock(char *stock)
 	char	*res;
 	char	*delimiter;
 
+	if (!stock)
+		return (0);
 	delimiter = ft_strchr(stock, '\n');
 	if (!delimiter)
 		return (0);
-	res = ft_strndup(stock, (ssize_t)(delimiter - stock + 1));
+	res = ft_strndup(stock, (size_t)(delimiter - stock + 1));
 	if (!res)
-		return (0);
+		return (stock);
 	return (res);
 }
 
-static void	remove_from_stock(char **stock, bool end)
+static int	remove_from_stock(char **stock, bool end)
 {
 	char	*res;
 	char	*delimiter;
@@ -37,15 +39,16 @@ static void	remove_from_stock(char **stock, bool end)
 	if (end && (!delimiter || ft_strlen(delimiter + 1) == 0))
 	{
 		free_stock(stock);
-		return ;
+		return (0);
 	}
 	if (!delimiter)
-		return ;
+		return (0);
 	res = ft_strndup(delimiter + 1, ft_strlen(delimiter + 1));
 	if (!res)
-		return ;
+		return (-1);
 	free(*stock);
 	*stock = res;
+	return (0);
 }
 
 static char	*get_line(char *buf, ssize_t count)
@@ -54,37 +57,50 @@ static char	*get_line(char *buf, ssize_t count)
 	char		*line;
 
 	if (count < 0)
-		return (free_stock(&stock), (char *)0);
+		return (free_stock(&stock), buf);
 	if ((!stock || stock[0] == 0) && count == 0)
 		return (free_stock(&stock), (char *)0);
 	if (count != 0)
-		add_stock(&stock, buf, count);
+		if (add_stock(&stock, buf, count) == -1)
+			return (buf);
 	line = get_from_stock(stock);
+	if (line == stock)
+		return (buf);
 	if (!line && (count < BUFFER_SIZE))
 	{
 		line = ft_strndup(stock, ft_strlen(stock));
 		free_stock(&stock);
 		if (!line)
-			return (0);
+			return (buf);
 	}
 	else if (line)
-		remove_from_stock(&stock, (count < BUFFER_SIZE));
+		if (remove_from_stock(&stock, (count < BUFFER_SIZE)) == -1)
+			return (buf);
 	return (line);
 }
 
 char	*get_next_line(int fd)
 {
-	char	buf[BUFFER_SIZE];
+	char	*buf;
 	char	*line;
 	ssize_t	res;
 
-	res = read(fd, buf, BUFFER_SIZE);
-	line = get_line(buf, res);
-	if (!line)
+	line = 0;
+	while (!line)
 	{
-		if (res <= 0)
+		buf = malloc(BUFFER_SIZE * sizeof (char));
+		if (!buf)
 			return (0);
-		return (get_next_line(fd));
+		res = read(fd, buf, BUFFER_SIZE);
+		line = get_line(buf, res);
+		if (line == buf)
+		{
+			free(buf);
+			return (0);
+		}
+		free(buf);
+		if (!line && res <= 0)
+			return (0);
 	}
 	return (line);
 }

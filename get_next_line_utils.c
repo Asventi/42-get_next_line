@@ -6,12 +6,11 @@
 /*   By: pjarnac <pjarnac@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 13:59:38 by pjarnac           #+#    #+#             */
-/*   Updated: 2024/11/26 14:37:13 by pjarnac          ###   ########.fr       */
+/*   Updated: 2024/11/27 13:50:53 by pjarnac          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 char	*ft_strchr(char *s, int c)
@@ -28,9 +27,9 @@ char	*ft_strchr(char *s, int c)
 		return (NULL);
 }
 
-ssize_t	ft_strlen(char *str)
+size_t	ft_strlen(char *str)
 {
-	ssize_t	c;
+	size_t	c;
 
 	c = 0;
 	if (!str)
@@ -40,11 +39,11 @@ ssize_t	ft_strlen(char *str)
 	return (c);
 }
 
-char	*ft_strndup(char *s, ssize_t n)
+char	*ft_strndup(char *s, size_t n)
 {
 	char		*dup;
-	ssize_t		slen;
-	ssize_t		i;
+	size_t		slen;
+	size_t		i;
 
 	slen = ft_strlen(s);
 	if (slen > n)
@@ -62,26 +61,33 @@ char	*ft_strndup(char *s, ssize_t n)
 	return (dup);
 }
 
-void	add_stock(char **stock, char *buf, ssize_t count)
+int	add_stock(char **stock, char *buf, size_t count)
 {
-	ssize_t	i;
-	ssize_t	j;
-	ssize_t	stock_len;
+	size_t	i;
+	size_t	j;
+	size_t	stock_len;
 	char	*res;
 
 	stock_len = ft_strlen(*stock);
 	res = malloc(stock_len + count + 1);
 	if (!res)
-		return ;
+		return (-1);
 	res[stock_len + count] = 0;
-	i = -1;
-	while (++i < stock_len)
+	i = 0;
+	while (i < stock_len)
+	{
 		res[i] = (*stock)[i];
-	j = -1;
-	while (++j < count)
+		i++;
+	}
+	j = 0;
+	while (j < count)
+	{
 		res[i + j] = buf[j];
+		j++;
+	}
 	free(*stock);
 	*stock = res;
+	return (0);
 }
 
 void	free_stock(char **stock)
